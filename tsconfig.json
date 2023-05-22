@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "experimentalDecorators": true,
+    "strictNullChecks": true,
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "outDir": "./dist",
+    "moduleResolution": "node",
+    "module": "ESNext",
+    "target": "ESNext",
+    "baseUrl": "./",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
