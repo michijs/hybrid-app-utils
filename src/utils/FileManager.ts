@@ -9,14 +9,14 @@ export class FakeWritable implements FileSystemWritableFileStream {
     this.fileName = fileName;
     this.onCreateFileCallback = onCreateFileCallback;
   }
-  seek(position: number): Promise<void> {
+  seek(_position: number): Promise<void> {
     throw new Error("Method not implemented.");
   }
-  truncate(size: number): Promise<void> {
+  truncate(_size: number): Promise<void> {
     throw new Error("Method not implemented.");
   }
   locked: boolean;
-  abort(reason?: any): Promise<void> {
+  abort(_reason?: any): Promise<void> {
     throw new Error("Method not implemented.");
   }
   getWriter(): WritableStreamDefaultWriter<any> {
