@@ -3,7 +3,6 @@
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
     "declaration": true,
-    "emitDeclarationOnly": true,
     "experimentalDecorators": true,
     "strictNullChecks": true,
     "lib": [
