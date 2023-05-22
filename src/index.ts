@@ -1,5 +1,6 @@
 import { Capacitor } from "@capacitor/core";
 import { Options } from "./types";
+export * from "./utils";
 
 export function setupHybrid(options?: Options) {
   if (Capacitor.isNativePlatform()) {
