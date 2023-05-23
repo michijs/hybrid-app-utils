@@ -2,7 +2,7 @@
   "name": "@michijs/hybrid-app-utils",
   "author": "Lucas M. Segurado",
   "license": "MIT",
-  "version": "5.0.4",
+  "version": "5.0.5",
   "baseUrl": "./src",
   "repository": {
     "type": "git",
@@ -34,9 +34,9 @@
     "typescript": "5.0.4"
   },
   "dependencies": {
-    "@capacitor/core": "5.0.3",
-    "@capacitor/status-bar": "5.0.2",
-    "@capacitor/app": "5.0.2"
+    "@capacitor/core": "5.0.1",
+    "@capacitor/status-bar": "5.0.1",
+    "@capacitor/app": "5.0.1"
   },
   "peerDependencies": {
     "@types/wicg-file-system-access": "2020.9.6",
