@@ -39,8 +39,6 @@ class FileUtils {
         // Here, we are creating a sample file with some content
         outputStream.write(content.getBytes());
         outputStream.close();
-
-        Toast.makeText(context, "File saved successfully", Toast.LENGTH_SHORT).show();
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -180,8 +178,6 @@ public class MichijsMainActivity extends BridgeActivity {
             }
           } else {
             javascriptInterface.notifySaveFilePickerResult(null, null);
-            // User canceled the file selection
-            Toast.makeText(MichijsMainActivity.this, "File selection cancelled", Toast.LENGTH_SHORT).show();
           }
         });
 
@@ -200,8 +196,6 @@ public class MichijsMainActivity extends BridgeActivity {
             }
           } else {
             javascriptInterface.notifyOpenFilePickerResult(null, null, null);
-            // User canceled the file selection
-            Toast.makeText(MichijsMainActivity.this, "File selection cancelled", Toast.LENGTH_SHORT).show();
           }
         });
   }
