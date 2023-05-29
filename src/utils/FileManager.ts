@@ -1,84 +1,5 @@
-type OnCreateFileCallback = (file: File) => void;
-
-export class FakeWritable implements FileSystemWritableFileStream {
-  private writableResult = "";
-  private fileName: string;
-  private onCreateFileCallback: OnCreateFileCallback;
-
-  constructor(fileName: string, onCreateFileCallback: OnCreateFileCallback) {
-    this.fileName = fileName;
-    this.onCreateFileCallback = onCreateFileCallback;
-  }
-  seek(_position: number): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-  truncate(_size: number): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-  locked: boolean;
-  abort(_reason?: any): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-  getWriter(): WritableStreamDefaultWriter<any> {
-    throw new Error("Method not implemented.");
-  }
-
-  async write(chunk: string) {
-    this.writableResult += chunk;
-  }
-  async close() {
-    const newFile = new File([this.writableResult], this.fileName, {
-      type: "text/plain;charset=utf-8",
-    });
-    const link = document.createElement("a");
-    link.setAttribute("download", this.fileName);
-    link.href = URL.createObjectURL(newFile);
-    link.click();
-    URL.revokeObjectURL(link.href);
-    this.onCreateFileCallback(newFile);
-  }
-}
-
-function fileSystemHandleIsFileSystemFileHandle(fileSystemHandle: FileSystemHandle): fileSystemHandle is FileSystemFileHandle {
-  return fileSystemHandle.kind === 'file'
-}
-
-export class FakeFileSystemFileHandle implements FileSystemFileHandle {
-  private file: File;
-
-  constructor(file: File) {
-    this.file = file;
-    this.name = file.name;
-  }
-  kind: "file";
-  isFile: true;
-  isDirectory: false;
-  name: string;
-
-  async isSameEntry(other: FileSystemHandle): Promise<boolean> {
-    if (fileSystemHandleIsFileSystemFileHandle(other)) {
-      const otherFile = await other.getFile()
-      return this.file === otherFile;
-    }
-    return false;
-  }
-  async queryPermission(
-    _descriptor?: FileSystemHandlePermissionDescriptor | undefined,
-  ): Promise<PermissionState> {
-    return "granted";
-  }
-  async requestPermission(
-    _descriptor?: FileSystemHandlePermissionDescriptor | undefined,
-  ): Promise<PermissionState> {
-    throw "granted";
-  }
-  async getFile() {
-    return this.file;
-  }
-  async createWritable(_options: FileSystemCreateWritableOptions) {
-    return new FakeWritable(this.file.name, (newFile) => (this.file = newFile));
-  }
-}
+import { FakeFileSystemFileHandle } from "./FakeFileSystemFileHandle";
+import { createHybridFileSystemFileHandle } from "./HybridLaunchQueue";
 
 export abstract class FileManager {
   static download(file: File) {
@@ -87,24 +8,41 @@ export abstract class FileManager {
     link.setAttribute("download", file.name);
     link.href = recordURL;
     link.click();
+    URL.revokeObjectURL(link.href);
   }
 
-  static supportsNativeShowSaveFilePicker = Boolean(window.showSaveFilePicker)
+  static supportsBrowserSaveFilePicker = Boolean(window.showSaveFilePicker)
 
   static showSaveFilePicker(
     options: Parameters<typeof window.showSaveFilePicker>[0],
   ): Promise<FileSystemFileHandle> {
-    if (FileManager.supportsNativeShowSaveFilePicker) return window.showSaveFilePicker(options);
+    if (FileManager.supportsBrowserSaveFilePicker) return window.showSaveFilePicker(options);
     else {
       return new Promise<FileSystemFileHandle>((resolve, reject) => {
-        const response = window.prompt("File name", options?.suggestedName);
-        if (response)
-          resolve(
-            new FakeFileSystemFileHandle(
-              new File([""], response, { type: "text/plain;charset=utf-8" }),
-            ),
-          );
-        reject("The user aborted a request.");
+        const type = Object.keys(options?.types?.[0].accept ?? [])[0];
+        if (window.HybridInterface) {
+          window.HybridInterface.onShowSaveFilePickerHasResult = (fileName, fileType) => {
+            console.log('test', fileName, fileType)
+            if (fileName && fileType)
+              resolve(
+                createHybridFileSystemFileHandle("", fileName, fileType)
+              )
+            else
+              reject("The user aborted a request.");
+          }
+          // TODO: Mime type support
+          window.HybridInterface?.showSaveFilePicker(options?.suggestedName ?? '', "*/*")
+        } else {
+          const response = window.prompt("File name", options?.suggestedName);
+          if (response)
+            resolve(
+              new FakeFileSystemFileHandle(
+                new File([""], response, { type: `${type};charset=utf-8` }),
+                this.download
+              )
+            );
+          reject("The user aborted a request.");
+        }
       });
     }
   }
@@ -114,29 +52,41 @@ export abstract class FileManager {
   ): Promise<FileSystemFileHandle[]> {
     if (window.showOpenFilePicker) return window.showOpenFilePicker(options);
     else {
-      return new Promise((resolve) => {
-        const el = document.createElement("input") as HTMLInputElement;
-        el.setAttribute("type", "file");
-        if (options?.types) {
-          const allAccept = options.types
-            .map((x) => {
-              return Object.entries(x.accept).map(([key, value]) => {
-                return Array.isArray(value) && value.length > 0
-                  ? value.join(",")
-                  : key;
-              });
-            })
-            .join(",");
-          el.setAttribute("accept", allAccept);
+      return new Promise((resolve, reject) => {
+        const allAccept = options?.types?.map((x) => {
+          return Object.entries(x.accept).map(([key, value]) => {
+            return Array.isArray(value) && value.length > 0
+              ? value
+              : key;
+          });
+        }).flat(2);
+        if (window.HybridInterface) {
+          window.HybridInterface.onShowOpenFilePickerHasResult = (fileContent, fileName, fileType) => {
+            if (fileContent && fileName && fileType)
+              resolve(
+                [createHybridFileSystemFileHandle(fileContent, fileName, fileType)]
+              )
+            else
+              reject("The user aborted a request.");
+          }
+          // TODO: Mime type support
+          // window.HybridInterface?.showOpenFilePicker(allAccept?.join(' ') ?? "*/*")
+          window.HybridInterface?.showOpenFilePicker("*/*")
+        } else {
+          const el = document.createElement("input") as HTMLInputElement;
+          el.setAttribute("type", "file");
+          if (allAccept)
+            el.setAttribute("accept", allAccept.join(","));
+          if (options?.multiple) el.multiple = options?.multiple;
+          // TODO: Handle reject
+          el.onchange = () => {
+            if (el?.files)
+              resolve(
+                Array.from(el.files).map((x) => new FakeFileSystemFileHandle(x, this.download)),
+              );
+          };
+          el.click();
         }
-        if (options?.multiple) el.multiple = options?.multiple;
-        el.onchange = () => {
-          if (el?.files)
-            resolve(
-              Array.from(el.files).map((x) => new FakeFileSystemFileHandle(x)),
-            );
-        };
-        el.click();
       });
     }
   }

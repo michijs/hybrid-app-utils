@@ -9,6 +9,8 @@
     "url": "https://github.com/michijs/hybrid-app-utils.git"
   },
   "files": [
+    "android/src/main/",
+    "android/build.gradle",
     "dist/"
   ],
   "main": "dist/index.js",
@@ -31,9 +33,12 @@
     "typescript"
   ],
   "devDependencies": {
+    "@capacitor/assets": "2.0.4",
+    "@capacitor/cli": "5.0.1",
     "typescript": "5.0.4"
   },
   "dependencies": {
+    "@capacitor/android": "5.0.1",
     "@capacitor/core": "5.0.1",
     "@capacitor/status-bar": "5.0.1",
     "@capacitor/app": "5.0.1"
