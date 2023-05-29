@@ -115,31 +115,17 @@ class JavaScriptInterface {
     return documentFile.getType();
   }
 
-  public void notifySaveFilePickerResult(@Nullable String fileName, @Nullable String fileType) {
+  public void notifySaveFilePickerResult(Boolean result) {
     WebView webView = context.getBridge().getWebView();
-    if (fileName == null) {
-      webView.evaluateJavascript(
-          "window.HybridInterface?.onShowSaveFilePickerHasResult?.()",
-          null);
-    } else {
-      webView.evaluateJavascript(
-          "window.HybridInterface?.onShowSaveFilePickerHasResult?.('" + fileName + "','" + fileType + "')", null);
-    }
+    webView.evaluateJavascript(
+        "window.HybridInterface?.onShowSaveFilePickerHasResult?.(" + result + ")", null);
   }
 
-  public void notifyOpenFilePickerResult(@Nullable String fileContent, @Nullable String fileName,
-      @Nullable String fileType) {
+  public void notifyOpenFilePickerResult(Boolean result) {
     WebView webView = context.getBridge().getWebView();
-    if (fileContent == null) {
       webView.evaluateJavascript(
-          "window.HybridInterface?.onShowOpenFilePickerHasResult?.()",
+          "window.HybridInterface?.onShowOpenFilePickerHasResult?.("+result+")",
           null);
-    } else {
-      webView.evaluateJavascript(
-          "window.HybridInterface?.onShowOpenFilePickerHasResult?.('" + fileContent + "','" + fileName + "','"
-              + fileType + "')",
-          null);
-    }
   }
 
   public void notifyNewOpenFileOpened() {
@@ -172,12 +158,11 @@ public class MichijsMainActivity extends BridgeActivity {
                 // Perform the saving operation using the selected file URI
                 javascriptInterface.openedFileUri = uri;
                 javascriptInterface.saveOpenedFile("");
-                javascriptInterface.notifySaveFilePickerResult(javascriptInterface.getOpenedFileName(),
-                    javascriptInterface.getOpenedFileType());
+                javascriptInterface.notifySaveFilePickerResult(true);
               }
             }
           } else {
-            javascriptInterface.notifySaveFilePickerResult(null, null);
+            javascriptInterface.notifySaveFilePickerResult(false);
           }
         });
 
@@ -190,12 +175,11 @@ public class MichijsMainActivity extends BridgeActivity {
               if (uri != null) {
                 // Process the selected file URI
                 javascriptInterface.openedFileUri = uri;
-                javascriptInterface.notifyOpenFilePickerResult(javascriptInterface.getOpenedFileContent(),
-                    javascriptInterface.getOpenedFileName(), javascriptInterface.getOpenedFileType());
+                javascriptInterface.notifyOpenFilePickerResult(true);
               }
             }
           } else {
-            javascriptInterface.notifyOpenFilePickerResult(null, null, null);
+            javascriptInterface.notifyOpenFilePickerResult(false);
           }
         });
   }

@@ -10,7 +10,7 @@ export const createHybridFileSystemFileHandle = (newFileContent: string, newFile
   })
 
 
-const getOpenedFileHandle = () => {
+export const getOpenedFileHandle = () => {
   if (window.HybridInterface) {
     const newFileContent = window.HybridInterface.getOpenedFileContent();
     const newFileName = window.HybridInterface.getOpenedFileName();

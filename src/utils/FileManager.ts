@@ -1,5 +1,5 @@
 import { FakeFileSystemFileHandle } from "./FakeFileSystemFileHandle";
-import { createHybridFileSystemFileHandle } from "./HybridLaunchQueue";
+import { getOpenedFileHandle } from "./HybridLaunchQueue";
 
 export abstract class FileManager {
   static download(file: File) {
@@ -21,11 +21,11 @@ export abstract class FileManager {
       return new Promise<FileSystemFileHandle>((resolve, reject) => {
         const type = Object.keys(options?.types?.[0].accept ?? [])[0];
         if (window.HybridInterface) {
-          window.HybridInterface.onShowSaveFilePickerHasResult = (fileName, fileType) => {
-            console.log('test', fileName, fileType)
-            if (fileName && fileType)
+          window.HybridInterface.onShowSaveFilePickerHasResult = (result) => {
+            const openedFile = getOpenedFileHandle();
+            if (result && openedFile)
               resolve(
-                createHybridFileSystemFileHandle("", fileName, fileType)
+                openedFile
               )
             else
               reject("The user aborted a request.");
@@ -61,10 +61,11 @@ export abstract class FileManager {
           });
         }).flat(2);
         if (window.HybridInterface) {
-          window.HybridInterface.onShowOpenFilePickerHasResult = (fileContent, fileName, fileType) => {
-            if (fileContent && fileName && fileType)
+          window.HybridInterface.onShowOpenFilePickerHasResult = (result) => {
+            const openedFile = getOpenedFileHandle();
+            if (result && openedFile)
               resolve(
-                [createHybridFileSystemFileHandle(fileContent, fileName, fileType)]
+                [openedFile]
               )
             else
               reject("The user aborted a request.");

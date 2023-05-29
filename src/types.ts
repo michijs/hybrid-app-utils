@@ -40,8 +40,8 @@ declare global {
       getOpenedFileType(): string;
       getOpenedFileName(): string;
       getShowSaveFilePickerResult(): boolean;
-      onShowSaveFilePickerHasResult(fileName?: string, fileType?: string): void
-      onShowOpenFilePickerHasResult(fileContent?: string, fileName?: string, fileType?: string): void
+      onShowSaveFilePickerHasResult(result: boolean): void
+      onShowOpenFilePickerHasResult(result: boolean): void
       onNewOpenFileOpened(): void
     }
     launchQueue?: LaunchQueue
