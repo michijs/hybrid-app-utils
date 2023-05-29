@@ -119,16 +119,29 @@ class JavaScriptInterface {
 
   public void notifySaveFilePickerResult(@Nullable String fileName, @Nullable String fileType) {
     WebView webView = context.getBridge().getWebView();
-    webView.evaluateJavascript(
-        "window.HybridInterface?.onShowSaveFilePickerHasResult?.('" + fileName + "','" + fileType + "')", null);
+    if (fileName == null) {
+      webView.evaluateJavascript(
+          "window.HybridInterface?.onShowSaveFilePickerHasResult?.()",
+          null);
+    } else {
+      webView.evaluateJavascript(
+          "window.HybridInterface?.onShowSaveFilePickerHasResult?.('" + fileName + "','" + fileType + "')", null);
+    }
   }
 
   public void notifyOpenFilePickerResult(@Nullable String fileContent, @Nullable String fileName,
       @Nullable String fileType) {
     WebView webView = context.getBridge().getWebView();
-    webView.evaluateJavascript(
-        "window.HybridInterface?.onShowOpenFilePickerHasResult?.('" + fileContent + "','" + fileName + "','" + fileType + "')",
-        null);
+    if (fileContent == null) {
+      webView.evaluateJavascript(
+          "window.HybridInterface?.onShowOpenFilePickerHasResult?.()",
+          null);
+    } else {
+      webView.evaluateJavascript(
+          "window.HybridInterface?.onShowOpenFilePickerHasResult?.('" + fileContent + "','" + fileName + "','"
+              + fileType + "')",
+          null);
+    }
   }
 
   public void notifyNewOpenFileOpened() {
@@ -200,9 +213,9 @@ public class MichijsMainActivity extends BridgeActivity {
     String action = intent.getAction();
 
     if (Intent.ACTION_VIEW.equals(action)) {
-        // Handle plain text file
-        javascriptInterface.openedFileUri = intent.getData();
-        javascriptInterface.notifyNewOpenFileOpened();
+      // Handle plain text file
+      javascriptInterface.openedFileUri = intent.getData();
+      javascriptInterface.notifyNewOpenFileOpened();
     }
   }
 }
