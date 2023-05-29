@@ -25,6 +25,15 @@ export interface LaunchQueue {
   setConsumer(launchParamsCallback: LaunchParamsCallback): void
 }
 
+interface HybridFile {
+  name: string,
+  text: string
+}
+
+export interface HybridShareData extends Omit<ShareData, 'files'> {
+  files: HybridFile[]
+}
+
 declare global {
 
   interface Window {
@@ -42,7 +51,9 @@ declare global {
       getShowSaveFilePickerResult(): boolean;
       onShowSaveFilePickerHasResult(result: boolean): void
       onShowOpenFilePickerHasResult(result: boolean): void
+      onShareHasResult(result: boolean): void
       onNewOpenFileOpened(): void
+      share(shareData: string): void
     }
     launchQueue?: LaunchQueue
   }
