@@ -34,6 +34,14 @@ export interface HybridShareData extends Omit<ShareData, 'files'> {
   files: HybridFile[]
 }
 
+export interface AndroidTheme {
+  primary: string,
+  secondary: string,
+  tertiary: string,
+  neutral: string,
+  neutralVariant: string
+}
+
 declare global {
 
   interface Window {
@@ -45,15 +53,16 @@ declare global {
        * Saves opened by OS file changes
        */
       saveOpenedFile(content: string): void;
-      getOpenedFileContent(): string;
-      getOpenedFileType(): string;
-      getOpenedFileName(): string;
+      getOpenedFileContent(): string | undefined;
+      getOpenedFileType(): string | undefined;
+      getOpenedFileName(): string | undefined;
       getShowSaveFilePickerResult(): boolean;
       onShowSaveFilePickerHasResult(result: boolean): void
       onShowOpenFilePickerHasResult(result: boolean): void
       onShareHasResult(result: boolean): void
       onNewOpenFileOpened(): void
       share(shareData: string): void
+      getSystemTheme(): string | undefined
     }
     launchQueue?: LaunchQueue
   }

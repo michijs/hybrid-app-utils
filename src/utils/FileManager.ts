@@ -19,7 +19,7 @@ export abstract class FileManager {
     if (FileManager.supportsBrowserSaveFilePicker) return window.showSaveFilePicker(options);
     else {
       return new Promise<FileSystemFileHandle>((resolve, reject) => {
-        const type = Object.keys(options?.types?.[0].accept ?? [])[0];
+        const type: string = Object.keys(options?.types?.[0].accept ?? [])[0];
         if (window.HybridInterface) {
           window.HybridInterface.onShowSaveFilePickerHasResult = (result) => {
             const openedFile = getOpenedFileHandle();
@@ -30,8 +30,7 @@ export abstract class FileManager {
             else
               reject("The user aborted a request.");
           }
-          // TODO: Mime type support
-          window.HybridInterface?.showSaveFilePicker(options?.suggestedName ?? '', "*/*")
+          window.HybridInterface?.showSaveFilePicker(options?.suggestedName ?? '', type ?? "*/*")
         } else {
           const response = window.prompt("File name", options?.suggestedName);
           if (response)
@@ -53,14 +52,8 @@ export abstract class FileManager {
     if (window.showOpenFilePicker) return window.showOpenFilePicker(options);
     else {
       return new Promise((resolve, reject) => {
-        const allAccept = options?.types?.map((x) => {
-          return Object.entries(x.accept).map(([key, value]) => {
-            return Array.isArray(value) && value.length > 0
-              ? value
-              : key;
-          });
-        }).flat(2);
         if (window.HybridInterface) {
+          const allAccept = options?.types?.map((x) => Object.keys(x.accept)).flat();
           window.HybridInterface.onShowOpenFilePickerHasResult = (result) => {
             const openedFile = getOpenedFileHandle();
             if (result && openedFile)
@@ -70,10 +63,15 @@ export abstract class FileManager {
             else
               reject("The user aborted a request.");
           }
-          // TODO: Mime type support
-          // window.HybridInterface?.showOpenFilePicker(allAccept?.join(' ') ?? "*/*")
-          window.HybridInterface?.showOpenFilePicker("*/*")
+          window.HybridInterface?.showOpenFilePicker(allAccept?.join('|') ?? "*/*")
         } else {
+          const allAccept = options?.types?.map((x) => {
+            return Object.entries(x.accept).map(([key, value]) => {
+              return Array.isArray(value) && value.length > 0
+                ? value
+                : key;
+            });
+          }).flat(2)
           const el = document.createElement("input") as HTMLInputElement;
           el.setAttribute("type", "file");
           if (allAccept)

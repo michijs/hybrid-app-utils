@@ -2,6 +2,7 @@ package com.michijs.plugins.hibridapputils;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -16,10 +17,12 @@ class JavaScriptInterface {
   public Uri openedFileUri;
   private final MichijsMainActivity context;
   private final FileUtils fileUtils;
+  private final ColorUtils colorUtils;
 
   JavaScriptInterface(MichijsMainActivity context) {
     this.context = context;
     this.fileUtils = new FileUtils(context);
+    this.colorUtils = new ColorUtils(context);
   }
 
   @JavascriptInterface
@@ -48,7 +51,7 @@ class JavaScriptInterface {
 
   @JavascriptInterface
   public String getOpenedFileContent() {
-    return fileUtils.readFile(openedFileUri);
+      return fileUtils.readFile(openedFileUri);
   }
 
   @JavascriptInterface
@@ -59,6 +62,21 @@ class JavaScriptInterface {
   @JavascriptInterface
   public String getOpenedFileType() {
     return fileUtils.getType(openedFileUri);
+  }
+
+  @JavascriptInterface
+  public JSONObject getSystemTheme() throws JSONException {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      JSONObject jsonObject = new JSONObject();
+      jsonObject.append("primary", colorUtils.getColor(android.R.color.system_accent1_50));
+      jsonObject.append("secondary", colorUtils.getColor(android.R.color.system_accent2_50));
+      jsonObject.append("tertiary", colorUtils.getColor(android.R.color.system_accent3_50));
+      jsonObject.append("neutral", colorUtils.getColor(android.R.color.system_neutral1_50));
+      jsonObject.append("neutralVariant", colorUtils.getColor(android.R.color.system_neutral2_50));
+      return jsonObject;
+    }
+
+    return null;
   }
 
   @JavascriptInterface
@@ -73,12 +91,7 @@ class JavaScriptInterface {
       String title = jsonObject.optString("title");
       String url = jsonObject.optString("url");
 
-      String action;
-      if (files != null && files.length() > 1) {
-        action = Intent.ACTION_SEND_MULTIPLE;
-      } else {
-        action = Intent.ACTION_SEND;
-      }
+      String action = Intent.ACTION_SEND_MULTIPLE;
 
       Intent shareIntent = new Intent(action);
       if (files != null) {
@@ -90,15 +103,22 @@ class JavaScriptInterface {
             String fileText = hybridFileJSON.getString("text");
 
             File file = fileUtils.createTempFile(fileName, fileText);
+            Uri uri;
+//          To avoid FileUriExposedException
+            if (Build.VERSION.SDK_INT >=  Build.VERSION_CODES.N) {
+              uri = Uri.parse(file.getPath());
+            } else{
+              uri = Uri.fromFile(file);
+            }
 
-            Uri uri = Uri.fromFile(file);
             fileUris.add(uri);
           } catch (JSONException e) {
             e.printStackTrace();
           }
         }
         shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileUris);
-        shareIntent.setType(fileUtils.getType(fileUris.get(0)));
+        String type = fileUtils.getType(fileUris.get(0));
+        shareIntent.setType(type != null ? type : "*/*");
       }
       if (!title.equals("")) {
         shareIntent.putExtra(Intent.EXTRA_TITLE, title);

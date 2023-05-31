@@ -15,7 +15,8 @@ export const getOpenedFileHandle = () => {
     const newFileContent = window.HybridInterface.getOpenedFileContent();
     const newFileName = window.HybridInterface.getOpenedFileName();
     const newFileType = window.HybridInterface.getOpenedFileType();
-    return createHybridFileSystemFileHandle(newFileContent, newFileName, newFileType)
+    if (newFileContent && newFileName && newFileType)
+      return createHybridFileSystemFileHandle(newFileContent, newFileName, newFileType)
   }
 }
 
