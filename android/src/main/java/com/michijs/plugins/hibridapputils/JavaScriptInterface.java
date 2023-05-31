@@ -48,32 +48,32 @@ class JavaScriptInterface {
   public void saveOpenedFile(String content) {
     fileUtils.saveFile(openedFileUri, content);
   }
-
+  
   @JavascriptInterface
-  public String getOpenedFileContent() {
-      return fileUtils.readFile(openedFileUri);
+  public String getOpenedFileContent() throws JSONException {
+    if (openedFileUri != null) {
+      JSONObject jsonObject = new JSONObject();
+      jsonObject.put("content", fileUtils.readFile(openedFileUri));
+      jsonObject.put("name", fileUtils.getName(openedFileUri));
+      jsonObject.put("type", fileUtils.getType(openedFileUri));
+
+      return jsonObject.toString();
+    }
+
+    return null;
   }
 
   @JavascriptInterface
-  public String getOpenedFileName() {
-    return fileUtils.getName(openedFileUri);
-  }
-
-  @JavascriptInterface
-  public String getOpenedFileType() {
-    return fileUtils.getType(openedFileUri);
-  }
-
-  @JavascriptInterface
-  public JSONObject getSystemTheme() throws JSONException {
+  public String getSystemTheme() throws JSONException {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
       JSONObject jsonObject = new JSONObject();
-      jsonObject.append("primary", colorUtils.getColor(android.R.color.system_accent1_50));
-      jsonObject.append("secondary", colorUtils.getColor(android.R.color.system_accent2_50));
-      jsonObject.append("tertiary", colorUtils.getColor(android.R.color.system_accent3_50));
-      jsonObject.append("neutral", colorUtils.getColor(android.R.color.system_neutral1_50));
-      jsonObject.append("neutralVariant", colorUtils.getColor(android.R.color.system_neutral2_50));
-      return jsonObject;
+      jsonObject.put("primary", colorUtils.getColor(android.R.color.system_accent1_50));
+      jsonObject.put("secondary", colorUtils.getColor(android.R.color.system_accent2_50));
+      jsonObject.put("tertiary", colorUtils.getColor(android.R.color.system_accent3_50));
+      jsonObject.put("neutral", colorUtils.getColor(android.R.color.system_neutral1_50));
+      jsonObject.put("neutralVariant", colorUtils.getColor(android.R.color.system_neutral2_50));
+
+      return jsonObject.toString();
     }
 
     return null;

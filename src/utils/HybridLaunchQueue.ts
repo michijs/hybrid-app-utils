@@ -11,12 +11,10 @@ export const createHybridFileSystemFileHandle = (newFileContent: string, newFile
 
 
 export const getOpenedFileHandle = () => {
-  if (window.HybridInterface) {
-    const newFileContent = window.HybridInterface.getOpenedFileContent();
-    const newFileName = window.HybridInterface.getOpenedFileName();
-    const newFileType = window.HybridInterface.getOpenedFileType();
-    if (newFileContent && newFileName && newFileType)
-      return createHybridFileSystemFileHandle(newFileContent, newFileName, newFileType)
+  const jsonOpenedFile = window.HybridInterface?.getOpenedFile();
+  if (jsonOpenedFile) {
+    const { content, name, type } = JSON.parse(jsonOpenedFile);
+    return createHybridFileSystemFileHandle(content, name, type)
   }
 }
 

@@ -53,9 +53,7 @@ declare global {
        * Saves opened by OS file changes
        */
       saveOpenedFile(content: string): void;
-      getOpenedFileContent(): string | undefined;
-      getOpenedFileType(): string | undefined;
-      getOpenedFileName(): string | undefined;
+      getOpenedFile(): string | undefined;
       getShowSaveFilePickerResult(): boolean;
       onShowSaveFilePickerHasResult(result: boolean): void
       onShowOpenFilePickerHasResult(result: boolean): void
