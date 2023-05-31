@@ -1,4 +1,4 @@
-import { AndroidTheme } from "src/types";
+import { AndroidTheme } from "../types";
 
 export const SystemTheme = {
   getSystemTheme(): AndroidTheme | undefined {
