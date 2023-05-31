@@ -6,6 +6,9 @@ import android.os.Build;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,20 +76,17 @@ class JavaScriptInterface {
     return null;
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.S)
   @JavascriptInterface
   public String getSystemTheme() throws JSONException {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
       JSONObject jsonObject = new JSONObject();
-      jsonObject.put("primary", colorUtils.getColor(android.R.color.system_accent1_50));
-      jsonObject.put("secondary", colorUtils.getColor(android.R.color.system_accent2_50));
-      jsonObject.put("tertiary", colorUtils.getColor(android.R.color.system_accent3_50));
-      jsonObject.put("neutral", colorUtils.getColor(android.R.color.system_neutral1_50));
-      jsonObject.put("neutralVariant", colorUtils.getColor(android.R.color.system_neutral2_50));
+      jsonObject.put("primary", colorUtils.getColor(android.R.color.system_accent1_500));
+      jsonObject.put("secondary", colorUtils.getColor(android.R.color.system_accent2_500));
+      jsonObject.put("tertiary", colorUtils.getColor(android.R.color.system_accent3_500));
+      jsonObject.put("neutral", colorUtils.getColor(android.R.color.system_neutral1_500));
+      jsonObject.put("neutralVariant", colorUtils.getColor(android.R.color.system_neutral2_500));
 
       return jsonObject.toString();
-    }
-
-    return null;
   }
 
   @JavascriptInterface

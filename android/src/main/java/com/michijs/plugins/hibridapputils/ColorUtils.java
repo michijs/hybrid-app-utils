@@ -12,7 +12,7 @@ public class ColorUtils {
         this.context = context;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public String getColor(int id){
         int color = context.getResources().getColor(id, context.getTheme());
         return String.format("#%06X", (0xFFFFFF & color));
