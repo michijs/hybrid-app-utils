@@ -36,11 +36,21 @@ class JavaScriptInterface {
   }
 
   @JavascriptInterface
-  public void showOpenFilePicker(String suggestedType) {
+  public void showOpenFilePicker(String suggestedTypes) {
     Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
-    intent.setType(suggestedType);
 
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      String[] types = suggestedTypes.split("\\|");
+      intent.setType(types.length == 1 ? types[0] : "*/*");
+//      intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+      if (types.length > 0) {
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, types);
+      }
+    } else {
+//      Supports types separated with |
+      intent.setType(suggestedTypes);
+    }
     context.openFileLauncher.launch(intent);
   }
 
@@ -48,9 +58,9 @@ class JavaScriptInterface {
   public void saveOpenedFile(String content) {
     fileUtils.saveFile(openedFileUri, content);
   }
-  
+
   @JavascriptInterface
-  public String getOpenedFileContent() throws JSONException {
+  public String getOpenedFile() throws JSONException {
     if (openedFileUri != null) {
       JSONObject jsonObject = new JSONObject();
       jsonObject.put("content", fileUtils.readFile(openedFileUri));
@@ -140,14 +150,14 @@ class JavaScriptInterface {
   public void notifySaveFilePickerResult(Boolean result) {
     WebView webView = context.getBridge().getWebView();
     webView.evaluateJavascript(
-        "window.HybridInterface?.onShowSaveFilePickerHasResult?.(" + result + ")", null);
+            "window.HybridInterface?.onShowSaveFilePickerHasResult?.(" + result + ")", null);
   }
 
   public void notifyOpenFilePickerResult(Boolean result) {
     WebView webView = context.getBridge().getWebView();
     webView.evaluateJavascript(
-        "window.HybridInterface?.onShowOpenFilePickerHasResult?.(" + result + ")",
-        null);
+            "window.HybridInterface?.onShowOpenFilePickerHasResult?.(" + result + ")",
+            null);
   }
 
   public void notifyShareResult(Boolean result) {
