@@ -15,7 +15,7 @@ export const share = async (shareData?: ShareData) => new Promise<void>(async (r
       ...shareData,
       files: await Promise.all((shareData.files ?? []).map(async x => ({
         text: await x.text(),
-        name: x.name
+        name: x.name,
       })))
     }
     window.HybridInterface?.share(JSON.stringify(hibridShareData))
