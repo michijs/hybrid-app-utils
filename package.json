@@ -2,7 +2,7 @@
   "name": "@michijs/hybrid-app-utils",
   "author": "Lucas M. Segurado",
   "license": "MIT",
-  "version": "5.0.16",
+  "version": "5.0.17",
   "baseUrl": "./src",
   "repository": {
     "type": "git",
