@@ -19,6 +19,8 @@ export const share = async (shareData: ShareData) => new Promise<void>(async (re
   window.HybridInterface?.share(JSON.stringify(hibridShareData))
 })
 
-export const HybridNavigator = {
-  share: navigator.share ?? share
+export const hybridNavigator = {
+  share: (data) => {
+    navigator.share ?? share
+  }
 }
