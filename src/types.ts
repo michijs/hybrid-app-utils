@@ -42,7 +42,7 @@ export interface AndroidTheme {
   neutralVariant: string
 }
 
-export type HybridNavigator = Pick<typeof navigator, 'share'>
+export type HybridNavigator = Pick<typeof navigator, 'share' | 'canShare'>
 
 
 declare global {

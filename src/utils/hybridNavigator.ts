@@ -27,8 +27,13 @@ export const hybridNavigator: HybridNavigator = {
   share: (data) => {
     if (navigator.share)
       return navigator.share(data)
-    else {
+    else 
       return share(data)
-    }
+  },
+  canShare: (data) => {
+    if(navigator.canShare)
+      return navigator.canShare(data)
+    else 
+      return !!window.HybridInterface?.share
   }
 }
