@@ -40,8 +40,8 @@ class FileUtils {
 
   public File createTempFile(String name, String content) {
     try {
-      String[] fileNameSplitted = name.split("\\|");
-      File file = File.createTempFile(fileNameSplitted[0], fileNameSplitted[1], context.getCacheDir());
+      String[] fileNameSplitted = name.split(".");
+      File file = File.createTempFile(fileNameSplitted[0], fileNameSplitted.length > 1 ? fileNameSplitted[1]: null, context.getCacheDir());
       FileWriter fileWriter = new FileWriter(file);
 
       // Create a BufferedWriter object using the FileWriter
