@@ -53,7 +53,7 @@ export abstract class FileManager {
     else {
       return new Promise((resolve, reject) => {
         if (window.HybridInterface) {
-          const allAccept = options?.types?.map((x) => Object.keys(x.accept)).flat();
+          const allAccept = options?.types?.filter(x => x.accept).map((x) => Object.keys(x.accept!)).flat();
           window.HybridInterface.onShowOpenFilePickerHasResult = (result) => {
             const openedFile = getOpenedFileHandle();
             if (result && openedFile)
@@ -65,8 +65,8 @@ export abstract class FileManager {
           }
           window.HybridInterface?.showOpenFilePicker(allAccept?.join('|') ?? "*/*")
         } else {
-          const allAccept = options?.types?.map((x) => {
-            return Object.entries(x.accept).map(([key, value]) => {
+          const allAccept = options?.types?.filter(x => x.accept).map((x) => {
+            return Object.entries(x.accept!).map(([key, value]) => {
               return Array.isArray(value) && value.length > 0
                 ? value
                 : key;
