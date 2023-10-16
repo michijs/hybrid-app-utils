@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@capacitor/android": "5.4.2",
-    "@capacitor/core": "5.4.2",
+    "@capacitor/core": "5.5.0",
     "@capacitor/status-bar": "5.0.6",
     "@capacitor/app": "5.0.6",
     "tabbable": "6.2.0"
