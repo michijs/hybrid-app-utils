@@ -25,12 +25,12 @@ export class FakeFileSystemFileHandle implements FileSystemFileHandle {
     return false;
   }
   async queryPermission(
-    _descriptor?: FileSystemHandlePermissionDescriptor | undefined
+    _descriptor?: FileSystemHandlePermissionDescriptor | undefined,
   ): Promise<PermissionState> {
     return "granted";
   }
   async requestPermission(
-    _descriptor?: FileSystemHandlePermissionDescriptor | undefined
+    _descriptor?: FileSystemHandlePermissionDescriptor | undefined,
   ): Promise<PermissionState> {
     throw "granted";
   }
@@ -43,7 +43,7 @@ export class FakeFileSystemFileHandle implements FileSystemFileHandle {
         type: this.file.type,
       });
       this.file = newFile;
-      this.onFileChange(newFile)
+      this.onFileChange(newFile);
     });
   }
 }

@@ -1,55 +1,51 @@
-
 export interface Options {
   statusBarAdapter?: {
-    disabled?: boolean
-  },
+    disabled?: boolean;
+  };
   backButtonAdapter?: {
-    disabled?: boolean
-  },
+    disabled?: boolean;
+  };
   padNavigationAdapter?: {
-    disabled?: boolean
-  }
+    disabled?: boolean;
+  };
 }
 
 export type OnCloseWriterCallback = (fileContent: string) => void;
 export type OnFileChangeCallback = (file: File) => void;
 
 export interface LaunchParams {
-  targetURL?: string,
-  files: FileSystemFileHandle[]
+  targetURL?: string;
+  files: FileSystemFileHandle[];
 }
 
 export type LaunchParamsCallback = (launchParams: LaunchParams) => void;
 
 export interface LaunchQueue {
-  setConsumer(launchParamsCallback: LaunchParamsCallback): void
+  setConsumer(launchParamsCallback: LaunchParamsCallback): void;
 }
 
 interface HybridFile {
-  name: string,
-  text: string
+  name: string;
+  text: string;
 }
 
-export interface HybridShareData extends Omit<ShareData, 'files'> {
-  files: HybridFile[]
+export interface HybridShareData extends Omit<ShareData, "files"> {
+  files: HybridFile[];
 }
 
 export interface AndroidTheme {
-  primary: string,
-  secondary: string,
-  tertiary: string,
-  neutral: string,
-  neutralVariant: string
+  primary: string;
+  secondary: string;
+  tertiary: string;
+  neutral: string;
+  neutralVariant: string;
 }
 
-export type HybridNavigator = Pick<typeof navigator, 'share' | 'canShare'>
-
+export type HybridNavigator = Pick<typeof navigator, "share" | "canShare">;
 
 declare global {
-
   interface Window {
     HybridInterface?: {
-
       showOpenFilePicker(suggestedType: string): void;
       showSaveFilePicker(suggestedName: string, suggestedType: string): void;
       /**
@@ -58,13 +54,13 @@ declare global {
       saveOpenedFile(content: string): void;
       getOpenedFile(): string | undefined;
       getShowSaveFilePickerResult(): boolean;
-      onShowSaveFilePickerHasResult(result: boolean): void
-      onShowOpenFilePickerHasResult(result: boolean): void
-      onShareHasResult(result: boolean): void
-      onNewOpenFileOpened(): void
-      share(shareData: string): void
-      getSystemTheme(): string | undefined
-    }
-    launchQueue?: LaunchQueue
+      onShowSaveFilePickerHasResult(result: boolean): void;
+      onShowOpenFilePickerHasResult(result: boolean): void;
+      onShareHasResult(result: boolean): void;
+      onNewOpenFileOpened(): void;
+      share(shareData: string): void;
+      getSystemTheme(): string | undefined;
+    };
+    launchQueue?: LaunchQueue;
   }
 }

@@ -84,7 +84,8 @@ function findNearestFocusableElement(direction) {
       const rect2 = element.getBoundingClientRect();
       const distance = calculateDistance(rect1, rect2);
       return { element, distance, rect: rect2 };
-    }).filter((x) => {
+    })
+    .filter((x) => {
       if (direction === "left") return x.distance.dx > 0;
       if (direction === "right") return x.distance.dx < 0;
       if (direction === "up") return x.distance.dy > 0;
@@ -93,18 +94,19 @@ function findNearestFocusableElement(direction) {
   let sortedArray: typeof distances | undefined;
   if (["left", "right"].includes(direction)) {
     const sameLineDistances = distances.filter((x) => x.distance.dy === 0);
-    sortedArray = (sameLineDistances.length ? sameLineDistances : distances).sort((a, b) => Math.abs(a.distance.dx) - Math.abs(b.distance.dx))
+    sortedArray = (
+      sameLineDistances.length ? sameLineDistances : distances
+    ).sort((a, b) => Math.abs(a.distance.dx) - Math.abs(b.distance.dx));
   } else
-    sortedArray = distances.sort((a, b) => Math.abs(a.distance.dy) - Math.abs(b.distance.dy));
+    sortedArray = distances.sort(
+      (a, b) => Math.abs(a.distance.dy) - Math.abs(b.distance.dy),
+    );
 
   return sortedArray?.[0]?.element;
 }
 
 // Helper function to calculate the distance between two elements
-function calculateDistance(
-  rect1: DOMRect,
-  rect2: DOMRect,
-) {
+function calculateDistance(rect1: DOMRect, rect2: DOMRect) {
   const x1 = rect1.left;
   const y1 = rect1.top;
   const x2 = rect2.left;

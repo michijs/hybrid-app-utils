@@ -1,6 +1,5 @@
 import { OnCloseWriterCallback } from "../types";
 
-
 export class FakeWritable implements FileSystemWritableFileStream {
   private writableResult = "";
   private onCloseWriter: OnCloseWriterCallback;
