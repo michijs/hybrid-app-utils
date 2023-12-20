@@ -55,8 +55,7 @@ export abstract class FileManager {
         if (window.HybridInterface) {
           const allAccept = options?.types
             ?.filter((x) => x.accept)
-            .map((x) => Object.keys(x.accept!))
-            .flat();
+            .flatMap((x) => Object.keys(x.accept!));
           window.HybridInterface.onShowOpenFilePickerHasResult = (result) => {
             const openedFile = getOpenedFileHandle();
             if (result && openedFile) resolve([openedFile]);
