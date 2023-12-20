@@ -13,7 +13,7 @@ export class FakeWritable implements FileSystemWritableFileStream {
   truncate(_size: number): Promise<void> {
     throw new Error("Method not implemented.");
   }
-  locked: boolean = false;
+  locked = false;
   abort(_reason?: any): Promise<void> {
     throw new Error("Method not implemented.");
   }
